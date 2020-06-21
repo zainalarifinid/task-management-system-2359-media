@@ -9,6 +9,8 @@ services:
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+    networks:
+      - webnet
     command: npm run test:watch
     env_file:
       - .env
@@ -46,5 +48,6 @@ services:
       - pgdata:/var/lib/postgresql/data
 networks:
   webnet:
+    external: true
 volumes:
   pgdata:
