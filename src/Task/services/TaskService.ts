@@ -35,24 +35,24 @@ export class TaskService {
     private readonly taskRepository: TaskRepository,
   ) {}
 
-  processDate(stringDate: string): any {
+  processDateString(stringDate: string): any {
     const date = moment(stringDate, 'MMM DD, YYYY @ hA').format();
     return date;
   }
 
-  processChildTime(acitivityDate: string, stringTime: string): any {
+  processTimeString(acitivityDate: string, stringTime: string): any {
     const time = stringTime.split('-');
     const startTime = acitivityDate + ' @ ' + time[timeDefinition.from];
     return {
-      startTime: this.processDate(startTime),
+      startTime: this.processDateString(startTime),
       endTime: time[1]
-                ? this.processDate(acitivityDate + ' @ ' + time[timeDefinition.to])
-                : moment(this.processDate(startTime)).add(1, 'hour').format(),
+                ? this.processDateString(acitivityDate + ' @ ' + time[timeDefinition.to])
+                : moment(this.processDateString(startTime)).add(1, 'hour').format(),
     }
   }
 
   processSimpleCommand(splitCommand: string[], originalCommand: string): any{
-    const startTime = this.processDate(splitCommand[taskSimple.timeDate] + ',' + splitCommand[taskSimple.timeYear]);
+    const startTime = this.processDateString(splitCommand[taskSimple.timeDate] + ',' + splitCommand[taskSimple.timeYear]);
     const endTime = moment(startTime).add(1, 'day').format();
     const result = {
       activity: splitCommand[taskSimple.activity].trim(),
@@ -65,8 +65,9 @@ export class TaskService {
   }
 
   processCompleteCommand(splitCommand: string[], originalCommand: string): any{
-    const startTime = this.processDate(splitCommand[taskComplete.timeDate] + ',' + splitCommand[taskComplete.timeYear]);
-    const endTime = moment(startTime).add(1, 'hour').format();
+    const dateString = originalCommand.split('@');
+    const timeString = dateString[1].split(',');
+    const { startTime, endTime } = this.processTimeString(dateString[0], timeString[0]);
     const result = {
       activity: splitCommand[taskComplete.activity].trim(),
       startTime,
@@ -79,7 +80,7 @@ export class TaskService {
   }
 
   processChildCommand(splitCommand: string[], acitivityDate: string): any {
-    const { startTime, endTime } = this.processChildTime(acitivityDate, splitCommand[taskChild.time]);
+    const { startTime, endTime } = this.processTimeString(acitivityDate, splitCommand[taskChild.time]);
     const result = {
       activity: splitCommand[taskChild.activity].trim(),
       startTime,

@@ -38,6 +38,7 @@ describe('Process The Task', () => {
     expect(taskService.processCommand(command, child)).toMatchObject({
       activity: 'Final Exam',
       startTime: '2017-10-11T14:00:00+00:00',
+      endTime: '2017-10-11T18:00:00+00:00',
       place: 'University',
       originalCommand: command,
       childActivity: [
