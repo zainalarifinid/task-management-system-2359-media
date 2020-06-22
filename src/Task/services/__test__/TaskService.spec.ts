@@ -45,12 +45,16 @@ describe('Process The Task', () => {
         {
           activity: 'Mathematic Exam',
           startTime: '2017-10-11T14:00:00+00:00',
-          endTime: '2017-10-11T16:00:00+00:00'
+          endTime: '2017-10-11T16:00:00+00:00',
+          place: null,
+          originalCommand: '2pm - 4pm, Mathematic Exam'
         },
         {
           activity: 'Physic Exam',
           startTime: '2017-10-11T16:00:00+00:00',
-          endTime: '2017-10-11T18:00:00+00:00'
+          endTime: '2017-10-11T18:00:00+00:00',
+          place: null,
+          originalCommand: '4pm - 6pm, Physic Exam'
         }
       ]
     })
@@ -62,6 +66,7 @@ describe('Process The Task', () => {
       activity: 'Harry’s birthday',
       startTime: '2017-11-15T00:00:00+00:00',
       endTime: '2017-11-16T00:00:00+00:00',
+      place: null,
       originalCommand: command
     })
   });

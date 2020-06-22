@@ -40,14 +40,14 @@ export class TaskService {
     return date;
   }
 
-  processTimeString(acitivityDate: string, stringTime: string): any {
+  processTimeString(acitivityDate: string, stringTime: string, extraTime: moment.unitOfTime.DurationConstructor = 'hour'): any {
     const time = stringTime.split('-');
     const startTime = acitivityDate + ' @ ' + time[timeDefinition.from];
     return {
       startTime: this.processDateString(startTime),
       endTime: time[1]
                 ? this.processDateString(acitivityDate + ' @ ' + time[timeDefinition.to])
-                : moment(this.processDateString(startTime)).add(1, 'hour').format(),
+                : moment(this.processDateString(startTime)).add(1, extraTime).format(),
     }
   }
 
@@ -58,6 +58,7 @@ export class TaskService {
       activity: splitCommand[taskSimple.activity].trim(),
       startTime,
       endTime,
+      place: null,
       originalCommand
     };
 
@@ -79,12 +80,14 @@ export class TaskService {
     return result;
   }
 
-  processChildCommand(splitCommand: string[], acitivityDate: string): any {
+  processChildCommand(splitCommand: string[], acitivityDate: string, originalCommand: string): any {
     const { startTime, endTime } = this.processTimeString(acitivityDate, splitCommand[taskChild.time]);
     const result = {
       activity: splitCommand[taskChild.activity].trim(),
       startTime,
       endTime,
+      place: null,
+      originalCommand
     }
 
     return result;
@@ -110,7 +113,7 @@ export class TaskService {
     if(childActivity) {
       result['childActivity'] = [];
       for(let i = 0; i < childActivity.length; i++) {
-        result['childActivity'].push(this.processChildCommand(childActivity[i].split(','), activityDate));
+        result['childActivity'].push(this.processChildCommand(childActivity[i].split(','), activityDate, childActivity[i]));
       }
     }
     
