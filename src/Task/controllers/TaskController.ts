@@ -12,11 +12,13 @@ export class TaskController {
     private taskService: TaskService,
   ) {}
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   @Post()
   @ApiOperation({
     summary: 'Create Task',
     description: 'The API to create task',
   })
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   async create(@Req() request, @Body() task: TaskField) {
     return this.taskService.processCommand(task.command);
   }
