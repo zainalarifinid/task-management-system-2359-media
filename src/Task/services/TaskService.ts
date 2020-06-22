@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from '../entities/Task';
 import { TaskRepository } from '../repositories/TaskRepository';
 import * as moment from 'moment';
+import { TaskFilterRequest } from '@Task/models/TaskFilterRequest';
 
 const commandDefinition = {
   date: 0,
@@ -19,12 +20,22 @@ const timeDefinition = {
   to: 1,
 };
 
+
+
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: TaskRepository,
   ) {}
+
+  async getListTask(filter: TaskFilterRequest): Promise<Task[]> {
+    const order = {};
+    order[filter.orderby] = filter.sortby;
+    const listTask = await this.taskRepository.find({ order });
+
+    return listTask;
+  }
 
   processDateString(stringDate: string): any {
     const date = moment(stringDate, ['MMM DD, YYYY @ hA', 'MMM DD, YYYY']).format();
