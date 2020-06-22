@@ -9,19 +9,6 @@ const taskChild = {
   activity: 1
 };
 
-const taskSimple = {
-  timeDate: 0,
-  timeYear: 1,
-  activity: 2
-};
-
-const taskComplete = {
-  timeDate: 0,
-  timeYear: 1,
-  place: 2,
-  activity: 3
-};
-
 const timeDefinition = {
   from: 0,
   to: 1
@@ -41,39 +28,33 @@ export class TaskService {
   }
 
   processTimeString(acitivityDate: string, stringTime: string, extraTime: moment.unitOfTime.DurationConstructor = 'hour'): any {
-    const time = stringTime.split('-');
-    const startTime = acitivityDate + ' @ ' + time[timeDefinition.from];
+    const time = stringTime ? stringTime.split('-') : [];
+    const startTime = time[timeDefinition.from] ? ' @ ' + time[timeDefinition.from] : '';
+    const startDate = acitivityDate + startTime;
     return {
-      startTime: this.processDateString(startTime),
-      endTime: time[1]
+      startTime: this.processDateString(startDate),
+      endTime: time[timeDefinition.to]
                 ? this.processDateString(acitivityDate + ' @ ' + time[timeDefinition.to])
-                : moment(this.processDateString(startTime)).add(1, extraTime).format(),
+                : moment(this.processDateString(startDate)).add(1, extraTime).format(),
     }
   }
 
-  processSimpleCommand(splitCommand: string[], originalCommand: string): any{
-    const startTime = this.processDateString(splitCommand[taskSimple.timeDate] + ',' + splitCommand[taskSimple.timeYear]);
-    const endTime = moment(startTime).add(1, 'day').format();
-    const result = {
-      activity: splitCommand[taskSimple.activity].trim(),
-      startTime,
-      endTime,
-      place: null,
-      originalCommand
-    };
-
-    return result;
-  }
-
   processCompleteCommand(splitCommand: string[], originalCommand: string): any{
-    const dateString = originalCommand.split('@');
-    const timeString = dateString[1].split(',');
-    const { startTime, endTime } = this.processTimeString(dateString[0], timeString[0]);
+    const splitDateString = originalCommand.replace('@', ',').split(',');
+    const dateString = splitDateString[0] + ',' + splitDateString[1];
+    let timeString = null;
+    let extraTime: moment.unitOfTime.DurationConstructor = 'hour';
+    if(originalCommand.includes('@')) {
+      timeString = originalCommand.replace('@', ',').split(',')[2];
+    }else{
+      extraTime = 'day';
+    }
+    const { startTime, endTime } = this.processTimeString(dateString, timeString, extraTime);
     const result = {
-      activity: splitCommand[taskComplete.activity].trim(),
+      activity: splitCommand[splitCommand.length - 1].trim(),
       startTime,
       endTime,
-      place: splitCommand[taskComplete.place].trim(),
+      place: splitCommand.length - 2 !== 1 ? splitCommand[splitCommand.length - 2].trim() : null,
       originalCommand
     };
 
@@ -83,7 +64,7 @@ export class TaskService {
   processChildCommand(splitCommand: string[], acitivityDate: string, originalCommand: string): any {
     const { startTime, endTime } = this.processTimeString(acitivityDate, splitCommand[taskChild.time]);
     const result = {
-      activity: splitCommand[taskChild.activity].trim(),
+      activity: splitCommand[splitCommand.length - 1].trim(),
       startTime,
       endTime,
       place: null,
@@ -93,7 +74,7 @@ export class TaskService {
     return result;
   }
 
-  processCommand(command: string, childActivity ?: any[]): any {
+  processCommand(command: string, childActivity ?: string[]): any {
     if(command.length === 0) {
       const error = new Error('Please insert correct command');
       error['code'] = 400;
@@ -104,11 +85,7 @@ export class TaskService {
     const activityDate = command.split('@')[0].trim();
     let result = null;
 
-    if(splitCommand.length > 3 ) {
-      result = this.processCompleteCommand(splitCommand, command);
-    }else{
-      result = this.processSimpleCommand(splitCommand, command);
-    }
+    result = this.processCompleteCommand(splitCommand, command);
     
     if(childActivity) {
       result['childActivity'] = [];

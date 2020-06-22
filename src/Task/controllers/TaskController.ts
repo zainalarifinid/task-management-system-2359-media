@@ -20,6 +20,6 @@ export class TaskController {
   })
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   async create(@Req() request, @Body() task: TaskField) {
-    return this.taskService.processCommand(task.command);
+    return this.taskService.processCommand(task.command, task.childCommand);
   }
 }
