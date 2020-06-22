@@ -8,4 +8,10 @@ export class TaskField {
   })
   command: string;
 
+  @ApiProperty({
+    description: 'Execute child command for child of current activity',
+    example: ['2pm - 4pm, Mathematic Exam', '4pm - 6pm, Physic Exam']
+  })
+  childCommand: string[];
+
 }

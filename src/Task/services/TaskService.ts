@@ -3,23 +3,11 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Task } from "../entities/Task";
 import { TaskRepository } from "../repositories/TaskRepository";
 import  * as moment from 'moment';
+import e from "express";
 
 const taskChild = {
   time: 0,
   activity: 1
-};
-
-const taskSimple = {
-  timeDate: 0,
-  timeYear: 1,
-  activity: 2
-};
-
-const taskComplete = {
-  timeDate: 0,
-  timeYear: 1,
-  place: 2,
-  activity: 3
 };
 
 const timeDefinition = {
@@ -35,81 +23,63 @@ export class TaskService {
     private readonly taskRepository: TaskRepository,
   ) {}
 
-  processDate(stringDate: string): any {
+  processDateString(stringDate: string): any {
     const date = moment(stringDate, 'MMM DD, YYYY @ hA').format();
     return date;
   }
 
-  processChildTime(acitivityDate: string, stringTime: string): any {
-    const time = stringTime.split('-');
-    const startTime = acitivityDate + ' @ ' + time[timeDefinition.from];
+  processTimeString(acitivityDate: string, stringTime: string, extraTime: moment.unitOfTime.DurationConstructor = 'hour'): any {
+    const time = stringTime ? stringTime.split('-') : [];
+    const startTime = time[timeDefinition.from] ? ' @ ' + time[timeDefinition.from] : '';
+    const startDate = acitivityDate + startTime;
     return {
-      startTime: this.processDate(startTime),
-      endTime: time[1]
-                ? this.processDate(acitivityDate + ' @ ' + time[timeDefinition.to])
-                : moment(this.processDate(startTime)).add(1, 'hour').format(),
+      startTime: this.processDateString(startDate),
+      endTime: time[timeDefinition.to]
+                ? this.processDateString(acitivityDate + ' @ ' + time[timeDefinition.to])
+                : moment(this.processDateString(startDate)).add(1, extraTime).format(),
     }
   }
 
-  processSimpleCommand(splitCommand: string[], originalCommand: string): any{
-    const startTime = this.processDate(splitCommand[taskSimple.timeDate] + ',' + splitCommand[taskSimple.timeYear]);
-    const endTime = moment(startTime).add(1, 'day').format();
+  processCompleteCommand(originalCommand: string, parentActivityDate?: string, parent?: number): any{
+    const splitCommandString = originalCommand.replace('@', ',').split(',');
+    const dateString = parent ? parentActivityDate : splitCommandString[0] + ',' + splitCommandString[1];
+    let timeString = null;
+    let extraTime: moment.unitOfTime.DurationConstructor = 'hour';
+    if(originalCommand.includes('@')) {
+      timeString = originalCommand.replace('@', ',').split(',')[2];
+    }else{
+      timeString = typeof (parent) !== 'undefined' ? splitCommandString[0] : null;
+      extraTime = 'day';
+    }
+    const { startTime, endTime } = this.processTimeString(dateString, timeString, extraTime);
     const result = {
-      activity: splitCommand[taskSimple.activity].trim(),
+      activity: splitCommandString[splitCommandString.length - 1].trim(),
       startTime,
       endTime,
-      originalCommand
+      place: splitCommandString.length - 2 > 1 ? splitCommandString[splitCommandString.length - 2].trim() : null,
+      originalCommand,
+      parent
     };
 
     return result;
   }
 
-  processCompleteCommand(splitCommand: string[], originalCommand: string): any{
-    const startTime = this.processDate(splitCommand[taskComplete.timeDate] + ',' + splitCommand[taskComplete.timeYear]);
-    const endTime = moment(startTime).add(1, 'hour').format();
-    const result = {
-      activity: splitCommand[taskComplete.activity].trim(),
-      startTime,
-      endTime,
-      place: splitCommand[taskComplete.place].trim(),
-      originalCommand
-    };
-
-    return result;
-  }
-
-  processChildCommand(splitCommand: string[], acitivityDate: string): any {
-    const { startTime, endTime } = this.processChildTime(acitivityDate, splitCommand[taskChild.time]);
-    const result = {
-      activity: splitCommand[taskChild.activity].trim(),
-      startTime,
-      endTime,
-    }
-
-    return result;
-  }
-
-  processCommand(command: string, childActivity ?: any[]): any {
+  processCommand(command: string, childActivity ?: string[]): any {
     if(command.length === 0) {
       const error = new Error('Please insert correct command');
       error['code'] = 400;
       return error;
     }
 
-    const splitCommand = command.split(',');
     const activityDate = command.split('@')[0].trim();
     let result = null;
 
-    if(splitCommand.length > 3 ) {
-      result = this.processCompleteCommand(splitCommand, command);
-    }else{
-      result = this.processSimpleCommand(splitCommand, command);
-    }
+    result = this.processCompleteCommand(command);
     
     if(childActivity) {
       result['childActivity'] = [];
       for(let i = 0; i < childActivity.length; i++) {
-        result['childActivity'].push(this.processChildCommand(childActivity[i].split(','), activityDate));
+        result['childActivity'].push(this.processCompleteCommand(childActivity[i], activityDate, 1));
       }
     }
     

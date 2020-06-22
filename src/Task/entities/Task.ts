@@ -25,12 +25,20 @@ export class Task extends BaseSqlEntity {
     description: 'The time user set be remind',
   })
   @Column()
-  time: Date;
+  time: Date = null;
 
   @ApiProperty({
     description: 'The venue or location, activity will be attended'
   })
   @Column()
-  place: string;
+  place: string = null;
+
+  @ApiProperty({
+    description: 'The id parent if the activity is child of parent activity'
+  })
+  @Column({
+    name: 'id_parent'
+  })
+  idParent: number;
 
 }
