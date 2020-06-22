@@ -2,6 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseSqlEntity } from '../../Common/BaseSqlEntity';
 
+type Nullable<T> = T | null;
+
 @Entity()
 export class Task extends BaseSqlEntity {
   @PrimaryGeneratedColumn()
@@ -24,13 +26,26 @@ export class Task extends BaseSqlEntity {
   @ApiProperty({
     description: 'The time user set be remind',
   })
-  @Column()
-  time: Date = null;
+  @Column({
+    name: 'start_time'
+  })
+  startTime: Date = null;
+
+  @ApiProperty({
+    description: 'The time activity will end',
+  })
+  @Column({
+    name: 'end_time'
+  })
+  endTime: Date = null;
 
   @ApiProperty({
     description: 'The venue or location, activity will be attended'
   })
-  @Column()
+  @Column({
+    nullable: true,
+    default: null,
+  })
   place: string = null;
 
   @ApiProperty({
