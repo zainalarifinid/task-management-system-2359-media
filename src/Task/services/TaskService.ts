@@ -2,8 +2,10 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from '../entities/Task';
 import { TaskRepository } from '../repositories/TaskRepository';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import { TaskFilterRequest } from '@Task/models/TaskFilterRequest';
+
+moment.tz.setDefault("Asia/Jakarta");
 
 const commandDefinition = {
   date: 0,

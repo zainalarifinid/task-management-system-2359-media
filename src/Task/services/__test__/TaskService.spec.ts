@@ -33,8 +33,8 @@ describe('Process The Task', () => {
       command = 'Oct 9, 2017 @ 9am, Community Centre, Swimming';
       const exampleDataTask = new Task();
       exampleDataTask.activity = 'Swimming';
-      exampleDataTask.startTime = '2017-10-09T09:00:00+00:00' as any;
-      exampleDataTask.endTime = '2017-10-09T10:00:00+00:00' as any;
+      exampleDataTask.startTime = '2017-10-09T09:00:00+07:00' as any;
+      exampleDataTask.endTime = '2017-10-09T10:00:00+07:00' as any;
       exampleDataTask.place = 'Community Centre';
       exampleDataTask.originalCommand = command;
       exampleDataTask.idParent = 0;
@@ -43,8 +43,8 @@ describe('Process The Task', () => {
   
       const exampleResult = {
         activity: 'Swimming',
-        startTime: '2017-10-09T09:00:00+00:00',
-        endTime: '2017-10-09T10:00:00+00:00',
+        startTime: '2017-10-09T09:00:00+07:00',
+        endTime: '2017-10-09T10:00:00+07:00',
         place: 'Community Centre',
         originalCommand: command,
         idParent: 0,
@@ -54,8 +54,8 @@ describe('Process The Task', () => {
       expect(taskRepositoryMock.save).toHaveBeenCalledWith(exampleDataTask);
       expect(resultTaskManagement).toMatchObject({
         activity: 'Swimming',
-        startTime: '2017-10-09T09:00:00+00:00',
-        endTime: '2017-10-09T10:00:00+00:00',
+        startTime: '2017-10-09T09:00:00+07:00',
+        endTime: '2017-10-09T10:00:00+07:00',
         place: 'Community Centre',
         originalCommand: command,
       });
@@ -67,8 +67,8 @@ describe('Process The Task', () => {
   
       const exampleDataTaskParent = new Task();
       exampleDataTaskParent.activity = 'Final Exam';
-      exampleDataTaskParent.startTime = '2017-10-11T14:00:00+00:00' as any;
-      exampleDataTaskParent.endTime = '2017-10-11T18:00:00+00:00' as any;
+      exampleDataTaskParent.startTime = '2017-10-11T14:00:00+07:00' as any;
+      exampleDataTaskParent.endTime = '2017-10-11T18:00:00+07:00' as any;
       exampleDataTaskParent.place = 'University';
       exampleDataTaskParent.originalCommand = command;
       exampleDataTaskParent.idParent = 0;
@@ -78,8 +78,8 @@ describe('Process The Task', () => {
       const exampleResultParent = {
         id: 1000,
         activity: 'Final Exam',
-        startTime: '2017-10-11T14:00:00+00:00',
-        endTime: '2017-10-11T18:00:00+00:00',
+        startTime: '2017-10-11T14:00:00+07:00',
+        endTime: '2017-10-11T18:00:00+07:00',
         place: 'University',
         originalCommand: command,
         idParent: 0,
@@ -87,16 +87,16 @@ describe('Process The Task', () => {
   
       const exampleResultChildFirst = {
         activity: 'Mathematic Exam',
-        startTime: '2017-10-11T14:00:00+00:00',
-        endTime: '2017-10-11T16:00:00+00:00',
+        startTime: '2017-10-11T14:00:00+07:00',
+        endTime: '2017-10-11T16:00:00+07:00',
         place: null,
         originalCommand: '2pm - 4pm, Mathematic Exam',
       };
   
       const exampleResultChildSecond = {
         activity: 'Physic Exam',
-        startTime: '2017-10-11T16:00:00+00:00',
-        endTime: '2017-10-11T18:00:00+00:00',
+        startTime: '2017-10-11T16:00:00+07:00',
+        endTime: '2017-10-11T18:00:00+07:00',
         place: null,
         originalCommand: '4pm - 6pm, Physic Exam',
       };
@@ -116,22 +116,22 @@ describe('Process The Task', () => {
   
       expect(resultTaskManagement).toMatchObject({
         activity: 'Final Exam',
-        startTime: '2017-10-11T14:00:00+00:00',
-        endTime: '2017-10-11T18:00:00+00:00',
+        startTime: '2017-10-11T14:00:00+07:00',
+        endTime: '2017-10-11T18:00:00+07:00',
         place: 'University',
         originalCommand: command,
         childActivity: [
           {
             activity: 'Mathematic Exam',
-            startTime: '2017-10-11T14:00:00+00:00',
-            endTime: '2017-10-11T16:00:00+00:00',
+            startTime: '2017-10-11T14:00:00+07:00',
+            endTime: '2017-10-11T16:00:00+07:00',
             place: null,
             originalCommand: '2pm - 4pm, Mathematic Exam',
           },
           {
             activity: 'Physic Exam',
-            startTime: '2017-10-11T16:00:00+00:00',
-            endTime: '2017-10-11T18:00:00+00:00',
+            startTime: '2017-10-11T16:00:00+07:00',
+            endTime: '2017-10-11T18:00:00+07:00',
             place: null,
             originalCommand: '4pm - 6pm, Physic Exam',
           },
@@ -144,8 +144,8 @@ describe('Process The Task', () => {
   
       const exampleDataTask = new Task();
       exampleDataTask.activity = 'Harry’s birthday';
-      exampleDataTask.startTime = '2017-11-15T00:00:00+00:00' as any;
-      exampleDataTask.endTime = '2017-11-16T00:00:00+00:00' as any;
+      exampleDataTask.startTime = '2017-11-15T00:00:00+07:00' as any;
+      exampleDataTask.endTime = '2017-11-16T00:00:00+07:00' as any;
       exampleDataTask.place = null;
       exampleDataTask.originalCommand = command;
       exampleDataTask.idParent = 0;
@@ -154,8 +154,8 @@ describe('Process The Task', () => {
   
       const exampleResult = {
         activity: 'Harry’s birthday',
-        startTime: '2017-11-15T00:00:00+00:00',
-        endTime: '2017-11-16T00:00:00+00:00',
+        startTime: '2017-11-15T00:00:00+07:00',
+        endTime: '2017-11-16T00:00:00+07:00',
         place: null,
         originalCommand: command,
         idParent: 0,
@@ -165,8 +165,8 @@ describe('Process The Task', () => {
       expect(taskRepositoryMock.save).toHaveBeenCalledWith(exampleDataTask);
       expect(resultTaskManagement).toMatchObject({
         activity: 'Harry’s birthday',
-        startTime: '2017-11-15T00:00:00+00:00',
-        endTime: '2017-11-16T00:00:00+00:00',
+        startTime: '2017-11-15T00:00:00+07:00',
+        endTime: '2017-11-16T00:00:00+07:00',
         place: null,
         originalCommand: command,
       });
@@ -177,16 +177,16 @@ describe('Process The Task', () => {
         const exampleResultFind = [
           {
             activity: 'Swimming',
-            startTime: '2017-10-09T09:00:00+00:00',
-            endTime: '2017-10-09T10:00:00+00:00',
+            startTime: '2017-10-09T09:00:00+07:00',
+            endTime: '2017-10-09T10:00:00+07:00',
             place: 'Community Centre',
             originalCommand: command,
             idParent: 0,
           },
           {
             activity: 'Final Exam',
-            startTime: '2017-10-11T14:00:00+00:00',
-            endTime: '2017-10-11T18:00:00+00:00',
+            startTime: '2017-10-11T14:00:00+07:00',
+            endTime: '2017-10-11T18:00:00+07:00',
             place: 'University',
             originalCommand: command,
             idParent: 0,
@@ -206,19 +206,19 @@ describe('Process The Task', () => {
           Array [
             Object {
               "activity": "Swimming",
-              "endTime": "2017-10-09T10:00:00+00:00",
+              "endTime": "2017-10-09T10:00:00+07:00",
               "idParent": 0,
               "originalCommand": "Nov 15, 2017, Harry’s birthday",
               "place": "Community Centre",
-              "startTime": "2017-10-09T09:00:00+00:00",
+              "startTime": "2017-10-09T09:00:00+07:00",
             },
             Object {
               "activity": "Final Exam",
-              "endTime": "2017-10-11T18:00:00+00:00",
+              "endTime": "2017-10-11T18:00:00+07:00",
               "idParent": 0,
               "originalCommand": "Nov 15, 2017, Harry’s birthday",
               "place": "University",
-              "startTime": "2017-10-11T14:00:00+00:00",
+              "startTime": "2017-10-11T14:00:00+07:00",
             },
           ]
         `);
@@ -232,8 +232,8 @@ describe('Process The Task', () => {
 
       const exampleDataTask = new Task();
       exampleDataTask.activity = 'wedding party';
-      exampleDataTask.startTime = '2020-06-28T21:00:00+00:00' as any;
-      exampleDataTask.endTime = '2020-06-28T22:00:00+00:00' as any;
+      exampleDataTask.startTime = '2020-06-28T21:00:00+07:00' as any;
+      exampleDataTask.endTime = '2020-06-28T22:00:00+07:00' as any;
       exampleDataTask.place = 'Raffles';
       exampleDataTask.originalCommand = 'Jun 28, 2020 @ 9pm, Raffles, wedding party';
       exampleDataTask.idParent = 0;
@@ -242,8 +242,8 @@ describe('Process The Task', () => {
   
       const exampleResult = {
         activity: 'wedding party',
-        startTime: '2020-06-28T21:00:00+00:00',
-        endTime: '2020-06-28T22:00:00+00:00',
+        startTime: '2020-06-28T21:00:00+07:00',
+        endTime: '2020-06-28T22:00:00+07:00',
         place: 'Raffles',
         originalCommand: 'Jun 28, 2020 @ 9pm, Raffles, wedding party',
         idParent: 0,
@@ -256,8 +256,8 @@ describe('Process The Task', () => {
 
       expect(resultTaskManagement).toMatchObject({
         activity: 'wedding party',
-        startTime: '2020-06-28T21:00:00+00:00',
-        endTime: '2020-06-28T22:00:00+00:00',
+        startTime: '2020-06-28T21:00:00+07:00',
+        endTime: '2020-06-28T22:00:00+07:00',
         place: 'Raffles',
         originalCommand: 'Jun 28, 2020 @ 9pm, Raffles, wedding party',
       });
@@ -268,8 +268,8 @@ describe('Process The Task', () => {
 
       const exampleDataTask = new Task();
       exampleDataTask.activity = 'swimming';
-      exampleDataTask.startTime = '2020-06-24T09:00:00+00:00' as any;
-      exampleDataTask.endTime = '2020-06-24T10:00:00+00:00' as any;
+      exampleDataTask.startTime = '2020-06-24T09:00:00+07:00' as any;
+      exampleDataTask.endTime = '2020-06-24T10:00:00+07:00' as any;
       exampleDataTask.place = 'Community Centre';
       exampleDataTask.originalCommand = 'Jun 24, 2020 @ 9am, Community Centre, swimming';
       exampleDataTask.idParent = 0;
@@ -278,8 +278,8 @@ describe('Process The Task', () => {
   
       const exampleResult = {
         activity: 'swimming',
-        startTime: '2020-06-24T09:00:00+00:00',
-        endTime: '2020-06-24T10:00:00+00:00',
+        startTime: '2020-06-24T09:00:00+07:00',
+        endTime: '2020-06-24T10:00:00+07:00',
         place: 'Community Centre',
         originalCommand: 'Jun 24, 2020 @ 9am, Community Centre, swimming',
         idParent: 0,
@@ -292,8 +292,8 @@ describe('Process The Task', () => {
 
       expect(resultTaskManagement).toMatchObject({
         activity: 'swimming',
-        startTime: '2020-06-24T09:00:00+00:00',
-        endTime: '2020-06-24T10:00:00+00:00',
+        startTime: '2020-06-24T09:00:00+07:00',
+        endTime: '2020-06-24T10:00:00+07:00',
         place: 'Community Centre',
         originalCommand: 'Jun 24, 2020 @ 9am, Community Centre, swimming',
       });

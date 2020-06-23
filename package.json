@@ -29,6 +29,7 @@
     "dotenv": "^8.2.0",
     "module-alias": "^2.2.2",
     "moment": "^2.27.0",
+    "moment-timezone": "^0.5.31",
     "pg": "^8.2.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
