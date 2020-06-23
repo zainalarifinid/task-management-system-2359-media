@@ -20,7 +20,21 @@ const timeDefinition = {
   to: 1,
 };
 
+const KEYWORD_ACTIVITY = [ 'join', 'go', 'write', 'draw', 'design', 'planning', 'buy', 'for', 'visit' ];
 
+const KEYWORD_PLACE = [ 'at', 'back' ];
+
+const KEYWORD_TIME = [ 'this', 'tomorrow' ];
+
+const KEYWORD_DAYS = {
+  monday: 1,
+  tuesday: 2,
+  wednesday: 3,
+  thursday: 4,
+  friday: 5,
+  saturday: 6,
+  sunday: 7
+};
 
 @Injectable()
 export class TaskService {
@@ -138,12 +152,12 @@ export class TaskService {
 
     command = command.replace(/'/g, "\'");
 
-    const activityDate = command.split('@')[0].trim();
     let result = null;
 
     result = await this.processCompleteCommand(command);
 
     if (childActivity) {
+      const activityDate = command.split('@')[0].trim();
       result['childActivity'] = [];
       await Promise.all(childActivity.map(async(data) => {
         result['childActivity'].push(
@@ -154,4 +168,64 @@ export class TaskService {
 
     return result;
   }
+
+  async processSingleString(commandString: string): Promise<Task | Error> {
+    if (commandString.length === 0) {
+      const error = new Error('Please insert correct command');
+      error['code'] = 400;
+      return error;
+    }
+    let result = null;
+
+    const searchActivity = new RegExp(KEYWORD_ACTIVITY.join('|'), 'gi');
+    const searchPlace = new RegExp(KEYWORD_PLACE.join('|'), 'gi');
+    const searchTime = new RegExp(KEYWORD_TIME.join('|'), 'gi');
+    const activity = commandString.slice(
+      commandString.lastIndexOf(commandString.match(searchActivity)[0]) + commandString.match(searchActivity)[0].length,
+      commandString.indexOf(commandString.match(searchPlace)[0]),
+    ).trim();
+
+    let place = commandString.slice(
+      commandString.lastIndexOf(
+        commandString.match(searchPlace)[0], 
+        commandString.indexOf(commandString.match(searchPlace)[0])
+      ) + commandString.match(searchPlace)[0].length,
+      commandString.indexOf(commandString.match(searchTime)[0])
+    ).trim();
+
+    let time = commandString.slice(
+      commandString.lastIndexOf(commandString.match(searchTime)[0]) + commandString.match(searchTime)[0].length,
+      commandString.length
+    ).trim();
+
+    const searchDays = new RegExp(Object.keys(KEYWORD_DAYS).join('|'), 'gi');
+    
+    let command = '';
+    let stringDate = '';
+    if(commandString.match(searchDays) !== null) {
+      stringDate = moment().day(KEYWORD_DAYS[time.split('at')[0].trim().toLowerCase()]).format('MMM DD, YYYY') +
+      ' @ ' + time.split('at')[1].trim().toLowerCase();
+    } else if (commandString.match(new RegExp('tomorrow', 'gi'))) {
+        place = commandString.slice(
+        commandString.lastIndexOf(
+          commandString.match(searchPlace)[0], 
+          commandString.indexOf(commandString.match(searchPlace)[0])
+        ) + commandString.match(searchPlace)[0].length,
+        commandString.indexOf(commandString.match(/((([1-9])|(1[0-2]))(A|P)M)/gi)[0])
+      ).trim();
+
+      time = commandString.slice(
+        commandString.indexOf(commandString.match(/((([1-9])|(1[0-2]))(A|P)M)/gi)[0]),
+        commandString.length
+      ).replace('tomorrow', '').trim();
+      stringDate = moment().add(1, 'day').format('MMM DD, YYYY') + ' @ ' + time;
+    }
+
+    command = stringDate + ', ' + place + ', ' + activity;
+
+    result = await this.processCommand(command);
+
+    return result;
+  }
+
 }
